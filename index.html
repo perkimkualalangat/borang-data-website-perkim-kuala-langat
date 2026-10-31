@@ -28,23 +28,22 @@
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
+    /* Tambah ruang bawah supaya FAB tidak menutup kandungan akhir */
+    padding-bottom: 100px; 
   }
 
-  /* Header & Progress */
+  /* Header - Tidak lagi sticky */
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 1.5rem 0;
   }
   .header-content {
     max-width: 54rem;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 0 1rem;
   }
-  header h1 { margin: 0; font-size: 1.25rem; color: var(--primary); font-weight: 700; }
+  header h1 { margin: 0; font-size: 1.3rem; color: var(--primary); font-weight: 700; }
   header p { margin: 0.25rem 0 0.75rem; color: var(--text-muted); font-size: 0.9rem; }
   
   .progress-container {
@@ -186,43 +185,81 @@
     opacity: 0.5;
   }
 
-  /* Buttons */
-  .actions {
+  /* FLOATING ACTION BUTTON (FAB) */
+  .fab-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin: 2rem 0;
-    padding: 1rem;
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    position: sticky;
-    bottom: 1rem;
-    z-index: 50;
-    border: 1px solid var(--border);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
   }
-  button {
-    padding: 0.75rem 1.25rem;
-    border-radius: 6px;
+  
+  .fab-menu {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     border: 1px solid var(--border);
-    background: var(--surface);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .fab-menu.show {
+    display: flex;
+    animation: slideUp 0.2s ease-out forwards;
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fab-menu button {
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
     color: var(--text);
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .fab-menu button:hover { background: #f3f4f6; }
+  .fab-menu button.primary { background: var(--primary); color: white; }
+  .fab-menu button.primary:hover { background: var(--primary-hover); }
+  .fab-menu button.danger { color: #b91c1c; }
+  .fab-menu button.danger:hover { background: #fee2e2; }
+
+  .fab-main {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(31, 122, 52, 0.4);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s, background 0.2s;
   }
-  button:hover { background: #f3f4f6; }
-  button.p { background: var(--primary); color: #fff; border-color: var(--primary); }
-  button.p:hover { background: var(--primary-hover); }
-  button.add-btn { width: 100%; border-style: dashed; margin-top: 0.5rem; color: var(--primary); border-color: var(--primary); background: var(--primary-light); }
-  button.add-btn:hover { background: #d1fae5; }
+  .fab-main:hover { transform: scale(1.05); }
+  .fab-main.active { transform: rotate(90deg); background: #b91c1c; box-shadow: 0 4px 12px rgba(185, 28, 28, 0.4); }
 
-  #msg { font-size: 0.9rem; white-space: pre-line; text-align: center; padding: 1rem; border-radius: 6px; }
+  #msg { font-size: 0.9rem; white-space: pre-line; text-align: center; padding: 1rem; border-radius: 6px; margin-top: 1rem;}
   .err { color: #b91c1c; background: #fef2f2; font-weight: 600; border: 1px solid #fecaca; }
   .ok { color: var(--primary); background: var(--primary-light); font-weight: 600; border: 1px solid #c8e6c9; }
 
@@ -231,9 +268,9 @@
 
   /* Print Mode */
   @media print {
-    body { background: #fff; font-size: 12px; }
-    header { position: static; box-shadow: none; border-bottom: 2px solid #000; padding: 0 0 1rem 0; }
-    .progress-container, .actions, .noprint, #msg { display: none !important; }
+    body { background: #fff; font-size: 12px; padding-bottom: 0; }
+    header { padding: 0 0 1rem 0; border-bottom: 2px solid #000; }
+    .progress-container, .fab-container, .noprint, #msg { display: none !important; }
     section.c { break-inside: avoid-page; border: 1px solid #888; box-shadow: none; padding: 1rem; }
     .card { break-inside: avoid; border: 1px solid #ccc; }
     input, select, textarea { border: 0; border-bottom: 1px solid #999; border-radius: 0; padding: 0.15rem 0; background: transparent; }
@@ -258,26 +295,30 @@
     <b>Panduan Pengisian (±15 minit):</b>
     <ol>
       <li>Semak setiap bahagian. Data yang telah diisi datang daripada rekod awam dan minit mesyuarat. <b>Anda boleh edit terus ruang nama jika terdapat kesalahan ejaan.</b></li>
-      <li>Di hujung borang, tandakan akuan, kemudian tekan <b>Muat turun .json</b> atau <b>Kongsi</b>.</li>
-      <li>Hantar fail tersebut kepada <span id="dev"></span> melalui WhatsApp. Borang ini juga boleh <b>Cetak</b> sebagai salinan PDF/kertas.</li>
+      <li>Di hujung borang, tandakan akuan, kemudian tekan butang menu di <b>sudut bawah kanan</b> untuk memuat turun fail.</li>
+      <li>Hantar fail tersebut kepada <span id="dev"></span> melalui WhatsApp.</li>
     </ol>
-    <p style="margin:.5rem 0 0"><b>Amaran Keselamatan:</b> Jangan isi No. KP atau nombor akaun bank di mana-mana ruang. Borang ini tidak menghantar data ke internet. Data kekal di peranti anda.</p>
+    <p style="margin:.5rem 0 0"><b>Amaran:</b> Jangan isi No. KP atau nombor akaun bank. Borang ini tidak menghantar data ke internet.</p>
   </div>
   
   <p class="po">Dijana: <span id="po-date"></span>. Disahkan oleh Setiausaha Kehormat PERKIM Kuala Langat.</p>
   
   <form id="f" onsubmit="return false"></form>
   
-  <div class="actions">
-    <button class="p" id="b-dl">⬇ Muat turun .json</button>
+  <p id="msg" role="status"></p>
+</main>
+
+<!-- Floating Action Button (FAB) Container -->
+<div class="fab-container">
+  <div class="fab-menu" id="fab-menu">
+    <button class="primary" id="b-dl">⬇ Muat turun .json</button>
     <button id="b-sh">↗ Kongsi (WhatsApp)</button>
     <button id="b-pr">🖨 Cetak / PDF</button>
     <button id="b-cp">📋 Salin JSON</button>
-    <button id="b-rs" class="noprint" style="margin-left:auto; color:#b91c1c; border-color:#fca5a5;">Kosongkan</button>
+    <button class="danger" id="b-rs">🗑 Kosongkan</button>
   </div>
-  
-  <p id="msg" role="status"></p>
-</main>
+  <button class="fab-main" id="fab-toggle" aria-label="Menu Tindakan">⚙️</button>
+</div>
 
 <script>
 const DEV = 'Muhammad Aiman bin Mohamad Rafee (Media/Pangkalan Data)';
@@ -290,7 +331,7 @@ const KP = [
   ["Pengurusan","Timbalan Pengerusi 2","Norhazanah binti Sarlan"],
   ["Pengurusan","Setiausaha","Faridah Hanim binti Mohd Ayub"],
   ["Pengurusan","Timbalan Setiausaha","Nor Ezan binti Sabihi"],
-  ["Pengurusan","Bendahari","Tholhah bin Agung Biyadi"],
+  ["Pengurusan","Bendahari","Tholhoh bin Agung Biyadi"],
   ["Pengurusan","Timbalan Bendahari","Azizah binti Mohamad"],
   ["Tetap & Pemeriksa","Pengerusi Tetap","Mohamad Hisan bin Mohamad Arif"],
   ["Tetap & Pemeriksa","Timbalan Pengerusi Tetap","Hamdan bin Yaacob"],
@@ -333,7 +374,6 @@ function fld(id, label, o={}) {
   i.id = id; 
   if(o.v != null) i.value = o.v; 
   
-  // Jika ini ruang nama, tambah wrapper untuk ikon edit
   if (id.includes('_n')) {
     const wrapper = E('div', 'input-edit-wrapper');
     wrapper.append(i);
@@ -358,7 +398,6 @@ const sec = (t, d, ...n) => {
 
 const row = (...n) => { const d = E('div', 'g2'); d.append(...n); return d; };
 
-// Kad Pemimpin
 function person(i, r) {
   const c = E('div', 'card');
   c.dataset.i = i;
@@ -385,7 +424,6 @@ function person(i, r) {
 
 function addPerson() { const i = KP.length + nx++; $('#kp').append(person(i, null)); }
 
-// Kad Program
 function prog(i) {
   const c = E('div', 'card');
   c.append(
@@ -400,12 +438,10 @@ function prog(i) {
 }
 function addProg() { $('#pg').append(prog(ng++)); }
 
-// Logik Tarikh Kustom (Pop-up/Select)
 function setupCustomDate() {
   const selectKuat = $('#kuat');
   const customContainer = $('#custom-date-container');
   
-  // Bina dropdown Hari, Bulan, Tahun
   const daySel = E('select'); daySel.id = 'kuat_day';
   daySel.add(new Option('Hari', ''));
   for(let i=1; i<=31; i++) daySel.add(new Option(i, i));
@@ -433,7 +469,6 @@ function setupCustomDate() {
   });
 }
 
-// Render Borang Utama
 function render() {
   const f = $('#f');
   const today = new Date().toLocaleDateString('en-CA');
@@ -520,7 +555,6 @@ function render() {
   setupCustomDate();
 }
 
-// Simpan & Restore Data
 const ids = () => [...document.querySelectorAll('#f [id]')].filter(e => /INPUT|SELECT|TEXTAREA/.test(e.tagName));
 
 function save() {
@@ -544,7 +578,6 @@ function restore() {
         else e.value = s.v[e.id];
       }
     });
-    // Trigger change on kuat to check if custom date should show
     $('#kuat').dispatchEvent(new Event('change'));
   } catch {}
 }
@@ -557,7 +590,6 @@ function prog_() {
   $('#pct').textContent = `${pct}% lengkap (${n} daripada ${a.length} ruang)`;
 }
 
-// Bina JSON Akhir
 const val = id => ($('#' + id)?.value || '').trim();
 const nul = x => x || null;
 const href = t => { let d = t.replace(/\D/g,''); if(d.startsWith('0')) d = '60' + d.slice(1); return d ? '+'+d : null; };
@@ -567,7 +599,6 @@ function build() {
   const W = val('waktu').split('\n').map(x => x.trim()).filter(Boolean);
   const yes = x => x === 'Ya';
   
-  // Kira tarikh kuat kuasa
   let tarikhKuat = val('kuat');
   if(tarikhKuat === 'Tarikh lain') {
     const d = val('kuat_day'), m = val('kuat_month'), y = val('kuat_year');
@@ -623,12 +654,16 @@ function build() {
   };
 }
 
-const msg = (t,c) => { const m = $('#msg'); m.textContent = t; m.className = c || ''; };
+const msg = (t,c) => { 
+  const m = $('#msg'); 
+  m.textContent = t; 
+  m.className = c || ''; 
+  m.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+};
 
 function ready() {
   if(!val('ak_n') || !$('#ak_ok').checked) {
     msg('Sila isi nama dan tandakan akuan di Bahagian 8 dahulu.', 'err');
-    $('#ak_ok').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return null;
   }
   const bad = ids().find(e => e.type !== 'checkbox' && e.type !== 'tel' && /\b\d{6}-?\d{2}-?\d{4}\b/.test(e.value));
@@ -644,7 +679,33 @@ function ready() {
 
 const blob = (r,t) => new Blob([r.txt], { type: t });
 
+// Toggle FAB Menu
+const fabToggle = $('#fab-toggle');
+const fabMenu = $('#fab-menu');
+
+fabToggle.addEventListener('click', () => {
+  fabMenu.classList.toggle('show');
+  fabToggle.classList.toggle('active');
+  fabToggle.textContent = fabToggle.classList.contains('active') ? '✕' : '⚙️';
+});
+
+// Sembunyikan menu jika klik di luar
+document.addEventListener('click', (e) => {
+  if (!fabToggle.contains(e.target) && !fabMenu.contains(e.target)) {
+    fabMenu.classList.remove('show');
+    fabToggle.classList.remove('active');
+    fabToggle.textContent = '⚙️';
+  }
+});
+
+function closeFab() {
+  fabMenu.classList.remove('show');
+  fabToggle.classList.remove('active');
+  fabToggle.textContent = '⚙️';
+}
+
 $('#b-dl').onclick = () => {
+  closeFab();
   const r = ready(); if(!r) return;
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob(r,'application/json')), download: r.name });
   document.body.append(a); a.click(); a.remove();
@@ -652,6 +713,7 @@ $('#b-dl').onclick = () => {
 };
 
 $('#b-sh').onclick = async () => {
+  closeFab();
   const r = ready(); if(!r) return;
   const f = new File([r.txt], r.name, { type: 'text/plain' });
   try {
@@ -665,24 +727,26 @@ $('#b-sh').onclick = async () => {
 };
 
 $('#b-cp').onclick = async () => {
+  closeFab();
   const r = ready(); if(!r) return;
   try { await navigator.clipboard.writeText(r.txt); msg('Kod JSON disalin. Tampal dalam mesej WhatsApp kepada penyedia.', 'ok'); }
   catch { msg('Salin gagal. Sila gunakan butang "Muat turun".', 'err'); }
 };
 
 $('#b-pr').onclick = () => {
+  closeFab();
   document.querySelectorAll('textarea').forEach(t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; });
-  print();
+  setTimeout(() => print(), 100);
 };
 
 $('#b-rs').onclick = () => {
+  closeFab();
   if(confirm('Adakah anda pasti ingin kosongkan semua data dan mula semula?')) {
     try { localStorage.removeItem(KEY); } catch {}
     location.reload();
   }
 };
 
-// Initialize
 render();
 restore();
 prog_();
